@@ -1,1 +1,32 @@
-<p>admin-dashboard works!</p>
+<h2>Panel de Administración</h2>
+
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+<app-error-message *ngIf="errorMessage" [message]="errorMessage"></app-error-message>
+
+<div class="stats-row" *ngIf="!isLoading && !errorMessage">
+  <mat-card>
+    <mat-card-title>{{ tickets.length }}</mat-card-title>
+    <mat-card-subtitle>Tickets totales</mat-card-subtitle>
+  </mat-card>
+  <mat-card>
+    <mat-card-title>{{ openCount }}</mat-card-title>
+    <mat-card-subtitle>Abiertos</mat-card-subtitle>
+  </mat-card>
+  <mat-card>
+    <mat-card-title>{{ inProgressCount }}</mat-card-title>
+    <mat-card-subtitle>En progreso</mat-card-subtitle>
+  </mat-card>
+  <mat-card>
+    <mat-card-title>{{ resolvedCount }}</mat-card-title>
+    <mat-card-subtitle>Resueltos</mat-card-subtitle>
+  </mat-card>
+  <mat-card>
+    <mat-card-title>{{ users.length }}</mat-card-title>
+    <mat-card-subtitle>Usuarios</mat-card-subtitle>
+  </mat-card>
+</div>
+
+<div class="actions">
+  <a mat-raised-button color="primary" routerLink="/tickets">Ver todos los tickets</a>
+  <a mat-raised-button color="accent" routerLink="/users">Gestionar usuarios</a>
+</div>

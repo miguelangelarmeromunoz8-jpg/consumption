@@ -1,0 +1,35 @@
+<h2>Usuarios</h2>
+
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+<app-error-message *ngIf="errorMessage" [message]="errorMessage"></app-error-message>
+
+<table mat-table [dataSource]="users" *ngIf="!isLoading && !errorMessage" class="mat-elevation-z1">
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Nombre</th>
+    <td mat-cell *matCellDef="let u">{{ u.name }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef>Correo</th>
+    <td mat-cell *matCellDef="let u">{{ u.email }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="role">
+    <th mat-header-cell *matHeaderCellDef>Rol</th>
+    <td mat-cell *matCellDef="let u">
+      <mat-chip>{{ u.role }}</mat-chip>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let u">
+      <button mat-button (click)="openChangeRoleDialog(u)">Cambiar rol</button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<p *ngIf="!isLoading && !errorMessage && users.length === 0">No hay usuarios registrados.</p>

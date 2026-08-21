@@ -1,0 +1,65 @@
+<div class="header">
+  <h2>Tickets</h2>
+  <a *ngIf="canCreateTicket()" mat-raised-button color="primary" routerLink="/tickets/new">
+    Nuevo ticket
+  </a>
+</div>
+
+<div class="filters">
+  <mat-form-field appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select [(ngModel)]="currentStatus" (selectionChange)="onFilterChange()">
+      <mat-option value="">Todos</mat-option>
+      <mat-option *ngFor="let s of statusOptions" [value]="s">{{ s }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Prioridad</mat-label>
+    <mat-select [(ngModel)]="currentPriority" (selectionChange)="onFilterChange()">
+      <mat-option value="">Todas</mat-option>
+      <mat-option *ngFor="let p of priorityOptions" [value]="p">{{ p }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-button (click)="clearFilters()">Limpiar filtros</button>
+</div>
+
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+<app-error-message *ngIf="errorMessage" [message]="errorMessage"></app-error-message>
+
+<table mat-table [dataSource]="tickets" *ngIf="!isLoading && !errorMessage" class="mat-elevation-z1">
+  <ng-container matColumnDef="title">
+    <th mat-header-cell *matHeaderCellDef>Título</th>
+    <td mat-cell *matCellDef="let t">{{ t.title }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef>Estado</th>
+    <td mat-cell *matCellDef="let t">
+      <mat-chip>{{ t.status }}</mat-chip>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="priority">
+    <th mat-header-cell *matHeaderCellDef>Prioridad</th>
+    <td mat-cell *matCellDef="let t">{{ t.priority }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="createdAt">
+    <th mat-header-cell *matHeaderCellDef>Creado</th>
+    <td mat-cell *matCellDef="let t">{{ t.createdAt | date: 'short' }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let t">
+      <a mat-button [routerLink]="['/tickets', t.id]">Ver</a>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<p *ngIf="!isLoading && !errorMessage && tickets.length === 0">No hay tickets que coincidan con los filtros.</p>

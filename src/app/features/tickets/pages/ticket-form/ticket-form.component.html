@@ -1,0 +1,36 @@
+<h2>{{ isEditMode ? 'Editar Ticket' : 'Nuevo Ticket' }}</h2>
+
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+<app-error-message *ngIf="errorMessage" [message]="errorMessage"></app-error-message>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Título</mat-label>
+    <input matInput formControlName="title" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Descripción</mat-label>
+    <textarea matInput formControlName="description" rows="4"></textarea>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Prioridad</mat-label>
+    <mat-select formControlName="priority">
+      <mat-option *ngFor="let p of priorityOptions" [value]="p">{{ p }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" *ngIf="isEditMode">
+    <mat-label>Estado</mat-label>
+    <mat-select formControlName="status">
+      <mat-option *ngFor="let s of statusOptions" [value]="s">{{ s }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="actions">
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting">
+      {{ isEditMode ? 'Guardar cambios' : 'Crear ticket' }}
+    </button>
+  </div>
+</form>

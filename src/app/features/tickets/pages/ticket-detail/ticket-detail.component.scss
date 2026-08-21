@@ -1,0 +1,32 @@
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.meta {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.date {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.85rem;
+}
+
+.section-divider {
+  margin: 24px 0;
+}
+
+.comment-card {
+  margin-bottom: 12px;
+}
+
+.comment-form {
+  margin-top: 16px;
+}
+
+.full-width {
+  width: 100%;
+}

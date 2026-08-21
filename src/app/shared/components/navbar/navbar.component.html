@@ -1,0 +1,14 @@
+<mat-toolbar color="primary" *ngIf="isLoggedIn">
+  <span class="brand" routerLink="/dashboard">Helpdesk</span>
+
+  <span class="spacer"></span>
+
+  <a mat-button routerLink="/dashboard">Dashboard</a>
+  <a mat-button routerLink="/tickets">Tickets</a>
+  <a mat-button *ngIf="authService.hasRole('admin')" routerLink="/users">Usuarios</a>
+
+  <span class="user-name" *ngIf="currentUser">{{ currentUser.name }}</span>
+  <button mat-icon-button (click)="logout()" aria-label="Cerrar sesión">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>

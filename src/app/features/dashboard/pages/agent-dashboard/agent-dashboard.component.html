@@ -1,1 +1,19 @@
-<p>agent-dashboard works!</p>
+<h2>Panel de Agente</h2>
+
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+<app-error-message *ngIf="errorMessage" [message]="errorMessage"></app-error-message>
+
+<div *ngIf="!isLoading && !errorMessage">
+  <p *ngIf="assignedTickets.length === 0">No tienes tickets asignados por el momento.</p>
+
+  <mat-card *ngFor="let ticket of assignedTickets" class="ticket-card">
+    <mat-card-title>{{ ticket.title }}</mat-card-title>
+    <mat-card-subtitle>
+      Estado: {{ ticket.status }} · Prioridad: {{ ticket.priority }}
+    </mat-card-subtitle>
+    <mat-card-content>{{ ticket.description }}</mat-card-content>
+    <mat-card-actions>
+      <a mat-button [routerLink]="['/tickets', ticket.id]">Ver detalle</a>
+    </mat-card-actions>
+  </mat-card>
+</div>

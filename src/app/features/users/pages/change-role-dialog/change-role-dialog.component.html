@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>Cambiar rol de {{ data.user.name }}</h2>
+
+<mat-dialog-content>
+  <app-error-message *ngIf="errorMessage" [message]="errorMessage"></app-error-message>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Rol</mat-label>
+    <mat-select [(ngModel)]="selectedRole">
+      <mat-option *ngFor="let r of roleOptions" [value]="r">{{ r }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="isSaving">
+    Guardar
+  </button>
+</mat-dialog-actions>

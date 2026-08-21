@@ -1,0 +1,10 @@
+{
+  "/api": {
+    "target": "https://sla-api.areasoftccyt.com",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": "/api"
+    }
+  }
+}

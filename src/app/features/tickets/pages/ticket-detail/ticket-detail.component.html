@@ -1,0 +1,45 @@
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+<app-error-message *ngIf="errorMessage" [message]="errorMessage"></app-error-message>
+
+<div *ngIf="!isLoading && ticket">
+  <div class="detail-header">
+    <h2>{{ ticket.title }}</h2>
+    <a *ngIf="canEdit()" mat-button [routerLink]="['/tickets', ticket.id, 'edit']">Editar</a>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <p>{{ ticket.description }}</p>
+      <div class="meta">
+        <mat-chip>Estado: {{ ticket.status }}</mat-chip>
+        <mat-chip>Prioridad: {{ ticket.priority }}</mat-chip>
+      </div>
+      <p class="date">Creado: {{ ticket.createdAt | date: 'medium' }}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-divider class="section-divider"></mat-divider>
+
+  <h3>Comentarios</h3>
+
+  <app-loading-spinner *ngIf="isLoadingComments"></app-loading-spinner>
+
+  <div *ngIf="!isLoadingComments">
+    <p *ngIf="comments.length === 0">Aún no hay comentarios.</p>
+
+    <mat-card *ngFor="let c of comments" class="comment-card">
+      <mat-card-subtitle>{{ c.authorName || 'Usuario' }} · {{ c.createdAt | date: 'short' }}</mat-card-subtitle>
+      <mat-card-content>{{ c.body }}</mat-card-content>
+    </mat-card>
+  </div>
+
+  <form [formGroup]="commentForm" (ngSubmit)="onSubmitComment()" class="comment-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Añadir un comentario</mat-label>
+      <textarea matInput formControlName="body" rows="3"></textarea>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit" [disabled]="commentForm.invalid || isSubmittingComment">
+      Enviar
+    </button>
+  </form>
+</div>

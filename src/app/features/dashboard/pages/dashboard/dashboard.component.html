@@ -1,1 +1,8 @@
-<p>dashboard works!</p>
+<div class="dashboard-wrapper">
+  <ng-container [ngSwitch]="role">
+    <app-admin-dashboard *ngSwitchCase="'admin'"></app-admin-dashboard>
+    <app-agent-dashboard *ngSwitchCase="'agent'"></app-agent-dashboard>
+    <app-client-dashboard *ngSwitchCase="'client'"></app-client-dashboard>
+    <p *ngSwitchDefault>No se pudo determinar tu rol de usuario.</p>
+  </ng-container>
+</div>
