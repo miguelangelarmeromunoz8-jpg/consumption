@@ -39,13 +39,13 @@ export class AuthService {
     localStorage.removeItem(USER_KEY);
   }
 
-  private setSession(res: AuthResponse): void {
-    localStorage.setItem(TOKEN_KEY, res.token);
-    if (res.refreshToken) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, res.refreshToken);
-    }
-    localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+private setSession(res: AuthResponse): void {
+  localStorage.setItem(TOKEN_KEY, res.accessToken);
+  if (res.refreshToken) {
+    localStorage.setItem(REFRESH_TOKEN_KEY, res.refreshToken);
   }
+  localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+}
 
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);

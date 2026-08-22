@@ -23,9 +23,23 @@ export class RefreshInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
       catchError((error) => {
-        if (error instanceof HttpErrorResponse && error.status === 401 && !req.url.includes('/auth/')) {
+        const isTokenExpired =
+          error instanceof HttpErrorResponse &&
+          error.status === 401 &&
+          error.error?.error?.code === 'TOKEN_EXPIRED';
+
+        const alreadyRetried = req.headers.has('X-Retry');
+
+        if (isTokenExpired && !req.url.includes('/auth/') && !alreadyRetried) {
           return this.handle401(req, next);
         }
+
+        if (isTokenExpired && alreadyRetried) {
+          // Ya reintentamos una vez y sigue fallando: cerramos sesión, sin loop.
+          this.authService.logout();
+          this.router.navigate(['/auth/login']);
+        }
+
         return throwError(() => error);
       })
     );
@@ -39,8 +53,8 @@ export class RefreshInterceptor implements HttpInterceptor {
       return this.authService.refreshToken().pipe(
         switchMap((res) => {
           this.isRefreshing = false;
-          this.refreshTokenSubject.next(res.token);
-          return next.handle(this.addToken(req, res.token));
+          this.refreshTokenSubject.next(res.accessToken);
+          return next.handle(this.addToken(req, res.accessToken));
         }),
         catchError((err) => {
           this.isRefreshing = false;
@@ -59,6 +73,11 @@ export class RefreshInterceptor implements HttpInterceptor {
   }
 
   private addToken(req: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
-    return req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
+    return req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+        'X-Retry': 'true',
+      },
+    });
   }
 }

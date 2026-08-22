@@ -45,8 +45,8 @@ export class TicketDetailComponent implements OnInit {
 
   loadTicket(id: string): void {
     this.ticketService.getTicketById(id).subscribe({
-      next: (ticket) => {
-        this.ticket = ticket;
+      next: (response: any) => {
+        this.ticket = response?.data ?? response;
         this.isLoading = false;
       },
       error: () => {
@@ -58,8 +58,9 @@ export class TicketDetailComponent implements OnInit {
 
   loadComments(ticketId: string): void {
     this.commentService.getCommentsByTicket(ticketId).subscribe({
-      next: (comments) => {
-        this.comments = comments;
+      next: (response: any) => {
+        const list = response?.data ?? response;
+        this.comments = Array.isArray(list) ? list : [];
         this.isLoadingComments = false;
       },
       error: () => {
@@ -75,12 +76,14 @@ export class TicketDetailComponent implements OnInit {
       const { body } = this.commentForm.value;
 
       this.commentService.addComment(this.ticket.id, { body }).subscribe({
-        next: (newComment) => {
+        next: (response: any) => {
+          const newComment = response?.data ?? response;
           this.comments.push(newComment);
           this.commentForm.reset();
           this.isSubmittingComment = false;
         },
-        error: () => {
+        error: (err) => {
+          console.error('Error al enviar comentario:', err);
           this.errorMessage = 'Error al enviar el comentario.';
           this.isSubmittingComment = false;
         },

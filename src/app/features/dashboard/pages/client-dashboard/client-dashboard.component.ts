@@ -22,12 +22,12 @@ export class ClientDashboardComponent implements OnInit {
     const currentUser = this.authService.getCurrentUser();
 
     this.ticketService.getTickets().subscribe({
-      next: (tickets) => {
+  next: (response) => {
         this.myTickets = currentUser
-          ? tickets.filter((t) => t.clientId === currentUser.id)
+          ? response.data.filter((t) => t.createdBy === currentUser.id)
           : [];
-        this.isLoading = false;
-      },
+    this.isLoading = false;
+  },
       error: () => {
         this.errorMessage = 'Error al cargar tus tickets.';
         this.isLoading = false;

@@ -2,19 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { CreateTicketRequest, Ticket, TicketPriority, TicketStatus, UpdateTicketRequest } from '../models/ticket.model';
+import { CreateTicketRequest, Ticket, TicketPriority, TicketStatus, UpdateTicketRequest, TicketListResponse } from '../models/ticket.model';
 
 @Injectable({ providedIn: 'root' })
 export class TicketService {
   private apiUrl = `${environment.apiUrl}/tickets`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  getTickets(status?: TicketStatus, priority?: TicketPriority): Observable<Ticket[]> {
-    let params = new HttpParams();
+  getTickets(status?: TicketStatus, priority?: TicketPriority, page = 1, limit = 10): Observable<TicketListResponse> {
+    let params = new HttpParams().set('page', page).set('limit', limit);
     if (status) params = params.set('status', status);
     if (priority) params = params.set('priority', priority);
-    return this.http.get<Ticket[]>(this.apiUrl, { params });
+    return this.http.get<TicketListResponse>(this.apiUrl, { params });
   }
 
   getTicketById(id: string): Observable<Ticket> {
@@ -30,7 +30,7 @@ export class TicketService {
   }
 
   assignTicket(id: string, agentId: string): Observable<Ticket> {
-    return this.http.patch<Ticket>(`${this.apiUrl}/${id}/assign`, { agentId });
+    return this.http.patch<Ticket>(`${this.apiUrl}/${id}/assign`, { assignedTo: agentId });
   }
 
   deleteTicket(id: string): Observable<void> {

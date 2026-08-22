@@ -4,9 +4,26 @@
 <app-error-message *ngIf="errorMessage" [message]="errorMessage"></app-error-message>
 
 <div *ngIf="!isLoading && !errorMessage">
+  <h3>Mis tickets asignados</h3>
   <p *ngIf="assignedTickets.length === 0">No tienes tickets asignados por el momento.</p>
 
   <mat-card *ngFor="let ticket of assignedTickets" class="ticket-card">
+    <mat-card-title>{{ ticket.title }}</mat-card-title>
+    <mat-card-subtitle>
+      Estado: {{ ticket.status }} · Prioridad: {{ ticket.priority }}
+    </mat-card-subtitle>
+    <mat-card-content>{{ ticket.description }}</mat-card-content>
+    <mat-card-actions>
+      <a mat-button [routerLink]="['/tickets', ticket.id]">Ver detalle</a>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-divider class="section-divider"></mat-divider>
+
+  <h3>Tickets sin asignar</h3>
+  <p *ngIf="unassignedTickets.length === 0">No hay tickets sin asignar.</p>
+
+  <mat-card *ngFor="let ticket of unassignedTickets" class="ticket-card">
     <mat-card-title>{{ ticket.title }}</mat-card-title>
     <mat-card-subtitle>
       Estado: {{ ticket.status }} · Prioridad: {{ ticket.priority }}

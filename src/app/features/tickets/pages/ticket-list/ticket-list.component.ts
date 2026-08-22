@@ -31,16 +31,16 @@ export class TicketListComponent implements OnInit {
   }
 
   loadTickets(): void {
-    this.isLoading = true;
-    this.errorMessage = '';
+  this.isLoading = true;
+  this.errorMessage = '';
 
-    this.ticketService
-      .getTickets(this.currentStatus || undefined, this.currentPriority || undefined)
-      .subscribe({
-        next: (tickets) => {
-          this.tickets = tickets;
-          this.isLoading = false;
-        },
+  this.ticketService
+    .getTickets(this.currentStatus || undefined, this.currentPriority || undefined)
+    .subscribe({
+      next: (response) => {
+        this.tickets = response.data;
+        this.isLoading = false;
+      },
         error: () => {
           this.errorMessage = 'Error al cargar los tickets.';
           this.isLoading = false;

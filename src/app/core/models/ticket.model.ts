@@ -7,8 +7,8 @@ export interface Ticket {
   description: string;
   status: TicketStatus;
   priority: TicketPriority;
-  clientId: string;
-  agentId?: string;
+  createdBy: string;
+  assignedTo?: string | null;
   createdAt: string;
   updatedAt?: string;
 }
@@ -25,4 +25,16 @@ export interface UpdateTicketRequest {
   status?: TicketStatus;
   priority?: TicketPriority;
   agentId?: string;
+}
+
+export interface TicketListMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface TicketListResponse {
+  data: Ticket[];
+  meta: TicketListMeta;
 }

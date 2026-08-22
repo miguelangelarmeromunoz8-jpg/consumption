@@ -10,22 +10,24 @@ import { Ticket } from '../../../../core/models/ticket.model';
 })
 export class AgentDashboardComponent implements OnInit {
   assignedTickets: Ticket[] = [];
+  unassignedTickets: Ticket[] = [];
   isLoading = true;
   errorMessage = '';
 
   constructor(
     private ticketService: TicketService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const currentUser = this.authService.getCurrentUser();
 
     this.ticketService.getTickets().subscribe({
-      next: (tickets) => {
+      next: (response) => {
         this.assignedTickets = currentUser
-          ? tickets.filter((t) => t.agentId === currentUser.id)
+          ? response.data.filter((t) => t.assignedTo === currentUser.id)
           : [];
+        this.unassignedTickets = response.data.filter((t) => !t.assignedTo);
         this.isLoading = false;
       },
       error: () => {

@@ -63,16 +63,26 @@ export class TicketFormComponent implements OnInit {
     if (this.form.invalid) return;
 
     this.isSubmitting = true;
+    this.errorMessage = '';
     const value = this.form.value;
 
     const request$ = this.isEditMode && this.ticketId
       ? this.ticketService.updateTicket(this.ticketId, value)
-      : this.ticketService.createTicket(value);
+      : this.ticketService.createTicket({
+          title: value.title,
+          description: value.description,
+          priority: value.priority,
+        });
 
     request$.subscribe({
-      next: (ticket) => {
+      next: (response: any) => {
         this.isSubmitting = false;
-        this.router.navigate(['/tickets', ticket.id]);
+        const ticket = response?.data ?? response;
+        if (ticket?.id) {
+          this.router.navigate(['/tickets', ticket.id]);
+        } else {
+          this.errorMessage = 'El ticket se guardó pero no se pudo abrir su detalle.';
+        }
       },
       error: () => {
         this.errorMessage = 'Error al guardar el ticket.';
