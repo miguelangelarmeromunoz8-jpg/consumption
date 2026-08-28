@@ -8,7 +8,7 @@ import { CreateTicketRequest, Ticket, TicketPriority, TicketStatus, UpdateTicket
 export class TicketService {
   private apiUrl = `${environment.apiUrl}/tickets`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getTickets(status?: TicketStatus, priority?: TicketPriority, page = 1, limit = 10): Observable<TicketListResponse> {
     let params = new HttpParams().set('page', page).set('limit', limit);
@@ -30,7 +30,7 @@ export class TicketService {
   }
 
   assignTicket(id: string, agentId: string): Observable<Ticket> {
-    return this.http.patch<Ticket>(`${this.apiUrl}/${id}/assign`, { assignedTo: agentId });
+    return this.http.put<Ticket>(`${this.apiUrl}/${id}`, { assignedTo: agentId });
   }
 
   deleteTicket(id: string): Observable<void> {

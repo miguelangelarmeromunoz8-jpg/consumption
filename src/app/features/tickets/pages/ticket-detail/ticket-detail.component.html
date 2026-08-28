@@ -18,6 +18,20 @@
     </mat-card-content>
   </mat-card>
 
+  <div *ngIf="authService.hasRole('admin')" class="assign-section">
+    <h3>Asignar a agente</h3>
+    <mat-form-field appearance="outline">
+      <mat-label>Agente</mat-label>
+      <mat-select [(ngModel)]="selectedAgentId">
+        <mat-option *ngFor="let agent of agents" [value]="agent.id">{{ agent.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="assignTicket()" [disabled]="!selectedAgentId || isAssigning">
+      Asignar
+    </button>
+  <p *ngIf="ticket?.assignedTo">Actualmente asignado a: {{ ticket.assignedTo }}</p>
+  </div>
+
   <mat-divider class="section-divider"></mat-divider>
 
   <h3>Comentarios</h3>

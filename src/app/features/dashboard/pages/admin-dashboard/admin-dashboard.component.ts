@@ -19,18 +19,18 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private ticketService: TicketService,
     private userService: UserService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     forkJoin({
-  ticketsResponse: this.ticketService.getTickets(),
-  users: this.userService.getUsers(),
-}).subscribe({
-  next: ({ ticketsResponse, users }) => {
-    this.tickets = ticketsResponse.data;
-    this.users = users;
-    this.isLoading = false;
-  },
+      ticketsResponse: this.ticketService.getTickets(),
+      usersResponse: this.userService.getUsers(),
+    }).subscribe({
+      next: ({ ticketsResponse, usersResponse }) => {
+        this.tickets = ticketsResponse.data;
+        this.users = usersResponse.data;
+        this.isLoading = false;
+      },
       error: () => {
         this.errorMessage = 'Error al cargar los datos del panel de administración.';
         this.isLoading = false;

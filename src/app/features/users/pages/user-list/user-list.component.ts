@@ -19,7 +19,7 @@ export class UserListComponent implements OnInit {
   constructor(
     private userService: UserService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -30,8 +30,8 @@ export class UserListComponent implements OnInit {
     this.errorMessage = '';
 
     this.userService.getUsers().subscribe({
-      next: (users) => {
-        this.users = users;
+      next: (response) => {
+        this.users = response.data;
         this.isLoading = false;
       },
       error: () => {

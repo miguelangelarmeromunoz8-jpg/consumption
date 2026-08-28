@@ -4,8 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { TicketService } from '../../../../core/services/ticket.service';
 import { CommentService } from '../../../../core/services/comment.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { UserService } from '../../../../core/services/user.service';
+import { ApiErrorService } from '../../../../core/services/api-error.service';
 import { Ticket } from '../../../../core/models/ticket.model';
 import { Comment } from '../../../../core/models/comment.model';
+import { User } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-ticket-detail',
@@ -23,12 +26,18 @@ export class TicketDetailComponent implements OnInit {
 
   commentForm: FormGroup;
 
+  agents: User[] = [];
+  selectedAgentId = '';
+  isAssigning = false;
+
   constructor(
     private route: ActivatedRoute,
     private ticketService: TicketService,
     private commentService: CommentService,
     public authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private userService: UserService,
+    private apiErrorService: ApiErrorService
   ) {
     this.commentForm = this.fb.group({
       body: ['', [Validators.required, Validators.minLength(1)]],
@@ -40,6 +49,7 @@ export class TicketDetailComponent implements OnInit {
     if (id) {
       this.loadTicket(id);
       this.loadComments(id);
+      this.loadAgentsIfAdmin();
     }
   }
 
@@ -49,8 +59,8 @@ export class TicketDetailComponent implements OnInit {
         this.ticket = response?.data ?? response;
         this.isLoading = false;
       },
-      error: () => {
-        this.errorMessage = 'Error al cargar el ticket.';
+      error: (err) => {
+        this.errorMessage = this.apiErrorService.getMessage(err, 'Error al cargar el ticket.');
         this.isLoading = false;
       },
     });
@@ -63,8 +73,8 @@ export class TicketDetailComponent implements OnInit {
         this.comments = Array.isArray(list) ? list : [];
         this.isLoadingComments = false;
       },
-      error: () => {
-        this.errorMessage = 'Error al cargar los comentarios.';
+      error: (err) => {
+        this.errorMessage = this.apiErrorService.getMessage(err, 'Error al cargar los comentarios.');
         this.isLoadingComments = false;
       },
     });
@@ -83,12 +93,37 @@ export class TicketDetailComponent implements OnInit {
           this.isSubmittingComment = false;
         },
         error: (err) => {
-          console.error('Error al enviar comentario:', err);
-          this.errorMessage = 'Error al enviar el comentario.';
+          this.errorMessage = this.apiErrorService.getMessage(err, 'Error al enviar el comentario.');
           this.isSubmittingComment = false;
         },
       });
     }
+  }
+
+  loadAgentsIfAdmin(): void {
+    if (this.authService.hasRole('admin')) {
+      this.userService.getUsers().subscribe({
+        next: (response) => {
+          this.agents = response.data.filter((u) => u.role === 'agent');
+        },
+      });
+    }
+  }
+
+  assignTicket(): void {
+    if (!this.ticket || !this.selectedAgentId) return;
+
+    this.isAssigning = true;
+    this.ticketService.assignTicket(this.ticket.id, this.selectedAgentId).subscribe({
+      next: (response: any) => {
+        this.ticket = response?.data ?? response;
+        this.isAssigning = false;
+      },
+      error: (err) => {
+        this.errorMessage = this.apiErrorService.getMessage(err, 'Error al asignar el ticket.');
+        this.isAssigning = false;
+      },
+    });
   }
 
   canEdit(): boolean {

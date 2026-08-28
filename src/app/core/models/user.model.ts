@@ -24,3 +24,8 @@ export interface RegisterRequest {
   email: string;
   password: string;
 }
+
+export interface UserListResponse {
+  data: User[];
+  total: number;
+}

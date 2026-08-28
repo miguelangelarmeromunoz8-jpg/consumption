@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TicketService } from '../../../../core/services/ticket.service';
+import { ApiErrorService } from '../../../../core/services/api-error.service';
 import { TicketPriority, TicketStatus } from '../../../../core/models/ticket.model';
 
 @Component({
@@ -25,11 +26,12 @@ export class TicketFormComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private ticketService: TicketService
+    private ticketService: TicketService,
+    private apiErrorService: ApiErrorService
   ) {
     this.form = this.fb.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
+      title: ['', [Validators.required, Validators.minLength(5)]],
+      description: ['', [Validators.required, Validators.minLength(10)]],
       priority: ['medium', Validators.required],
       status: ['open'],
     });
@@ -51,8 +53,8 @@ export class TicketFormComponent implements OnInit {
           });
           this.isLoading = false;
         },
-        error: () => {
-          this.errorMessage = 'Error al cargar el ticket.';
+        error: (err) => {
+          this.errorMessage = this.apiErrorService.getMessage(err, 'Error al cargar el ticket.');
           this.isLoading = false;
         },
       });
@@ -84,8 +86,8 @@ export class TicketFormComponent implements OnInit {
           this.errorMessage = 'El ticket se guardó pero no se pudo abrir su detalle.';
         }
       },
-      error: () => {
-        this.errorMessage = 'Error al guardar el ticket.';
+      error: (err) => {
+        this.errorMessage = this.apiErrorService.getMessage(err, 'Error al guardar el ticket.');
         this.isSubmitting = false;
       },
     });
